@@ -20,15 +20,19 @@ def remove_no_variance(X):
     # Use a variance threshold to remove any features with zero variance
     threshold = 0
     variance_threshold = VarianceThreshold(threshold=threshold)
-    X = variance_threshold.fit_transform(X)
-    return X
+    X_transformed = variance_threshold.fit_transform(X)
+
+    # Find the indices of the removed columns
+    removed_columns = np.where(variance_threshold.variances_ == threshold)[0]
+
+    return X_transformed, removed_columns
 
 
-def pearson_correlation(x, y):
-    x_mean = np.mean(x)
-    y_mean = np.mean(y)
-    num = np.sum((x - x_mean) * (y - y_mean))
-    den = np.sqrt(np.sum((x - x_mean) ** 2) * np.sum((y - y_mean) ** 2))
+def pearson_correlation(X, Y):
+    x_mean = np.mean(X)
+    y_mean = np.mean(Y)
+    num = np.sum((X - x_mean) * (Y - y_mean))
+    den = np.sqrt(np.sum((X - x_mean) ** 2) * np.sum((Y - y_mean) ** 2))
     return num / den
 
 
@@ -65,21 +69,21 @@ def pearson_correlation_matrix(X):
     plt.show()
 
 
-def standardise_features(x):
+def standardise_features(X):
     # Scale the training set using a standard scaler
     standard_scaler = StandardScaler()
-    x = standard_scaler.fit_transform(x)
+    X = standard_scaler.fit_transform(X)
 
     # Check that the mean of each feature is 0 and the standard deviation is 1
-    expected_mean = np.zeros(x.shape[1])
-    expected_std = np.ones(x.shape[1])
-    computed_mean = np.mean(x, axis=0)
-    computed_std = np.std(x, axis=0)
+    expected_mean = np.zeros(X.shape[1])
+    expected_std = np.ones(X.shape[1])
+    computed_mean = np.mean(X, axis=0)
+    computed_std = np.std(X, axis=0)
 
     assert np.all(np.round(computed_mean, 6) == expected_mean)
     assert np.all(np.round(computed_std, 6) == expected_std)
 
-    return x
+    return X
 
 
 def preprocess_star_dataset(file_name: str = "star_assessment.csv") -> (np.ndarray, np.ndarray):
