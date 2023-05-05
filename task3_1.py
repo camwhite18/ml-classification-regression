@@ -1,7 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.impute import KNNImputer
 
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.feature_selection import VarianceThreshold
 
 
