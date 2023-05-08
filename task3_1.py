@@ -1,7 +1,7 @@
+import datetime
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.impute import KNNImputer
-
 from sklearn.preprocessing import StandardScaler, LabelEncoder
 from sklearn.feature_selection import VarianceThreshold
 
@@ -112,3 +112,34 @@ def preprocess_star_dataset(file_name: str = "star_assessment.csv") -> (np.ndarr
     star_features = standardise_features(star_features)
 
     return star_features, star_labels
+
+
+def fill_missing_dates(gwp_categorical):
+    for i in range(1, gwp_categorical.shape[0]):
+        if not gwp_categorical[i, 0]:
+            if gwp_categorical[i - 1, 0] and (gwp_categorical[i - 1, 0] == gwp_categorical[i + 1, 0]):
+                gwp_categorical[i, 0] = gwp_categorical[i - 1, 0]
+            else:
+                previous_day = datetime.datetime.strptime(gwp_categorical[i - 1, 3], '%A').weekday()
+                current_day = datetime.datetime.strptime(gwp_categorical[i, 3], '%A').weekday()
+                difference_in_days = (current_day - previous_day) % 7
+
+                prev_date = datetime.datetime.strptime(gwp_categorical[i - 1, 0], '%m/%d/%Y')
+                current_date = prev_date + datetime.timedelta(days=difference_in_days)
+                gwp_categorical[i, 0] = current_date.strftime('%m/%d/%Y')
+    return gwp_categorical
+
+
+def fill_missing_quarters(gwp_categorical):
+    for i in range(1, gwp_categorical.shape[0]):
+        if not gwp_categorical[i, 1]:
+            if gwp_categorical[i - 1, 1] and (gwp_categorical[i - 1, 1] == gwp_categorical[i + 1, 1]):
+                gwp_categorical[i, 1] = gwp_categorical[i - 1, 1]
+    return gwp_categorical
+
+
+def fill_missing_days(gwp_categorical):
+    for i in range(1, gwp_categorical.shape[0]):
+        if not gwp_categorical[i, 3]:
+            gwp_categorical[i, 3] = datetime.datetime.strptime(gwp_categorical[i, 0], '%m/%d/%Y').strftime('%A')
+    return gwp_categorical
