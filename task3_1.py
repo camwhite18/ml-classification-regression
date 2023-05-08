@@ -70,16 +70,20 @@ def pearson_correlation_matrix(X):
     plt.show()
 
 
-def standardise_features(X):
+def standardise_features(X, cols=None):
+    # If no columns are specified, standardise all features
+    if cols is None:
+        cols = range(X.shape[1])
+
     # Scale the training set using a standard scaler
     standard_scaler = StandardScaler()
-    X = standard_scaler.fit_transform(X)
+    X[:, cols] = standard_scaler.fit_transform(X[:, cols])
 
-    # Check that the mean of each feature is 0 and the standard deviation is 1
-    expected_mean = np.zeros(X.shape[1])
-    expected_std = np.ones(X.shape[1])
-    computed_mean = np.mean(X, axis=0)
-    computed_std = np.std(X, axis=0)
+    # Check that the mean of each feature transformed is 0 and the standard deviation is 1
+    expected_mean = np.zeros(len(cols))
+    expected_std = np.ones(len(cols))
+    computed_mean = np.mean(X[:, cols], axis=0)
+    computed_std = np.std(X[:, cols], axis=0)
 
     assert np.all(np.round(computed_mean, 6) == expected_mean)
     assert np.all(np.round(computed_std, 6) == expected_std)
