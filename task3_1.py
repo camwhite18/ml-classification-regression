@@ -222,6 +222,6 @@ def preprocess_gwp_dataset(file_name: str = "gwp_assessment.csv") -> (np.ndarray
 
     # Drop the features that are not relevant to the regression task
     gwp_features = np.delete(gwp_features, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                                            11, 12, 13, 14, 29, 30, 31, 32, 33], axis=1)
+                                            11, 12, 13, 14, 29, 30, 32, 33], axis=1)
 
     return gwp_features, gwp_values
