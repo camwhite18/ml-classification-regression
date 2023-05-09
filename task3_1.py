@@ -6,12 +6,17 @@ from sklearn.preprocessing import StandardScaler, LabelEncoder, OneHotEncoder
 from sklearn.feature_selection import VarianceThreshold
 
 
-def remove_outliers(X, Y):
+def remove_outliers(X, Y, ignore_cols=None):
+    if ignore_cols is None:
+        ignore_cols = []
+    cols = [i for i in range(X.shape[1]) if i not in ignore_cols]
+
     # Use the Interquartile Range (IQR) to remove outliers
-    Q1 = np.quantile(X, 0.25, axis=0)
-    Q3 = np.quantile(X, 0.75, axis=0)
+    Q1 = np.quantile(X[:, cols], 0.25, axis=0)
+    Q3 = np.quantile(X[:, cols], 0.75, axis=0)
     IQR = Q3 - Q1
-    mask = ~((X < (Q1 - 1.5 * IQR)) | (X > (Q3 + 1.5 * IQR))).any(axis=1)
+
+    mask = ~((X[:, cols] < (Q1 - 1.5 * IQR)) | (X[:, cols] > (Q3 + 1.5 * IQR))).any(axis=1)
     X = X[mask]
     Y = Y[mask]
     return X, Y
@@ -205,6 +210,10 @@ def preprocess_gwp_dataset(file_name: str = "gwp_assessment.csv") -> (np.ndarray
     team = ohc.fit_transform(gwp_features[:, [16]])
     gwp_features = np.hstack((gwp_features[:, :16], team, gwp_features[:, 17:]))
 
+    # Remove outliers
+    continuous_features = list(range(0, 28)) + list(range(33, 36))
+    gwp_features, gwp_values = remove_outliers(gwp_features, gwp_values, ignore_cols=continuous_features)
+
     # Remove features with no variance
     gwp_features, _ = remove_no_variance(gwp_features)
 
@@ -215,6 +224,6 @@ def preprocess_gwp_dataset(file_name: str = "gwp_assessment.csv") -> (np.ndarray
 
     # Drop the features that are not relevant to the regression task
     gwp_features = np.delete(gwp_features, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                                                                  11, 12, 13, 14, 29, 30, 31, 32, 33], axis=1)
+                                            11, 12, 13, 14, 29, 30, 31, 32, 33], axis=1)
 
     return gwp_features, gwp_values
