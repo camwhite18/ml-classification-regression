@@ -219,8 +219,6 @@ def preprocess_gwp_dataset(file_name: str = "gwp_assessment.csv") -> (np.ndarray
 
     # Scale the features
     gwp_features = standardise_features(gwp_features, cols=range(27, 36))
-    scaler = StandardScaler()
-    gwp_values = scaler.fit_transform(gwp_values.reshape(-1, 1)).flatten()
 
     # Drop the features that are not relevant to the regression task
     gwp_features = np.delete(gwp_features, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
