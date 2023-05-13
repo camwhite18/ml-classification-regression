@@ -34,10 +34,10 @@ def evaluate_regression_model(model, x_test, y_test, plot=True):
         plt.show()
 
 
-def train_star_support_vector_classifier():
-    return SVC()
+def create_tuned_star_svc():
+    return SVC(kernel='rbf', C=1000, gamma=0.1)
 
 
-def train_gwp_random_forest():
+def create_tuned_gwp_rf():
     return RandomForestRegressor(n_estimators=50, max_depth=20, min_samples_leaf=4, min_samples_split=2,
                                  bootstrap=True)
