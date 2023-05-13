@@ -34,16 +34,10 @@ def evaluate_regression_model(model, x_test, y_test, plot=True):
         plt.show()
 
 
-def train_star_support_vector_classifier(x_train, y_train, x_test, y_test):
-    model = SVC()
-    model.fit(x_train, y_train)
-    evaluate_classification_model(model, x_test, y_test)
-    return model
+def train_star_support_vector_classifier():
+    return SVC()
 
 
-def train_gwp_random_forest(x_train, y_train, x_test, y_test):
-    model = RandomForestRegressor(n_estimators=50, max_depth=20, min_samples_leaf=4, min_samples_split=2,
-                                   bootstrap=True)
-    model.fit(x_train, y_train)
-    evaluate_regression_model(model, x_test, y_test)
-    return model
+def train_gwp_random_forest():
+    return RandomForestRegressor(n_estimators=50, max_depth=20, min_samples_leaf=4, min_samples_split=2,
+                                 bootstrap=True)
